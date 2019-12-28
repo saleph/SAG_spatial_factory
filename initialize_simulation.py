@@ -1,5 +1,5 @@
 from spade import agent
-from SimulationAgent import FactoryAgent
+from FactoryAgent import FactoryAgent
 from initialize_logger import initialize_logger
 import networkx as nx
 from typing import Dict

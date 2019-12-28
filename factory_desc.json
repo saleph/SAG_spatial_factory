@@ -1,0 +1,52 @@
+{
+    "car": {
+        "ingredients": {
+            "wheel": 4,
+            "door": 4,
+            "engine": 1,
+            "steel": 200,
+            "paint": 120
+        },
+        "production_time": 30
+    },
+    "wheel": {
+        "ingredients": {
+            "aluminum": 10,
+            "gum": 3
+        },
+        "production_time": 50
+    },
+    "door": {
+        "ingredients": {
+            "steel": 14,
+            "glass": 2
+        },
+        "production_time": 15
+    },
+    "engine": {
+        "ingredients": {
+            "steel": 200
+        },
+        "production_time": 200
+    },
+    "steel": {
+        "ingredients": {},
+        "production_time": 0
+    },
+    "paint": {
+        "ingredients": {},
+        "production_time": 0
+    },
+    "aluminum": {
+        "ingredients": {},
+        "production_time": 0
+    },
+    "gum": {
+        "ingredients": {},
+        "production_time": 0
+    },
+    "glass": {
+        "ingredients": {},
+        "production_time": 0
+    }
+}

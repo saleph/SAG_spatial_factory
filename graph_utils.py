@@ -8,18 +8,6 @@ import pylab
 from operator import itemgetter
 from statistics import mean 
 
-def load_json(filename) -> dict:
-    if not os.path.isfile(filename):
-        print("There is no cached {0}".format(filename))
-        return None
-
-    with open(filename, 'r') as f:
-        return json.load(f)
-
-def dump_json(dictionary : dict, filename):
-    with open(filename, 'w') as f:
-        f.write(json.dumps(dictionary))
-
 def dump(G, filename):
     directory = pathlib.Path(filename).parent
     directory.mkdir(parents=True, exist_ok=True)
