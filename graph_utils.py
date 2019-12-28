@@ -8,33 +8,30 @@ import pylab
 from operator import itemgetter
 from statistics import mean 
 
-def dump(G, filename):
+def dump_binary(G, filename):
     directory = pathlib.Path(filename).parent
     directory.mkdir(parents=True, exist_ok=True)
-    print("Dumping the graph into pickle in", filename)
     nx.write_gpickle(G, filename)
-    print("Dumping sucessful")
 
-def dump_geffi(G, filename):
-    directory = pathlib.Path(filename).parent
-    directory.mkdir(parents=True, exist_ok=True)
-    print("Dumping the graph into gexf format in", filename)
-    nx.write_gexf(G, filename)
-    print("Dumping sucessful")
-
-def load_geffi(filename):
-    return nx.read_gexf(filename)
-
-def load(filename):
-    print("Loading pickled graph from", filename)
+def load_binary(filename):
     if not os.path.isfile(filename):
-        print("There is no cached graph")
         return None
     G = nx.read_gpickle(filename)
-    print("Graph loaded from pickle")
     return G
 
-def draw(G):
+def dump_json(G, filename):
+    directory = pathlib.Path(filename).parent
+    directory.mkdir(parents=True, exist_ok=True)
+    with open(filename, "w") as f:
+        f.write(json.dumps(nx.node_link_data(G), indent=4))
+
+def load_json(filename):
+    if not os.path.isfile(filename):
+        return None
+    with open(filename, "r") as f:
+        return nx.node_link_graph(json.loads(f.read()))
+
+def draw_ego(G):
     # nx.draw_shell(G, with_labels=True, font_weight='bold')
     # plt.show()
     print("Start drawing the graph...")
@@ -44,7 +41,14 @@ def draw(G):
     hub_ego = nx.ego_graph(G, largest_hub)
     # Draw graph
     pos = nx.spring_layout(hub_ego)
-    nx.draw(hub_ego, pos, node_color='b', node_size=10, with_labels=False)
+    nx.draw(hub_ego, pos, node_color='b', node_size=50, with_labels=False)
     # Draw ego as large and red
-    nx.draw_networkx_nodes(hub_ego, pos, nodelist=[largest_hub], node_size=50, node_color='r')
+    nx.draw_networkx_nodes(hub_ego, pos, nodelist=[largest_hub], node_size=100, node_color='r')
+    plt.show()
+
+def draw_with_node_attrib(G, attrib_name):
+    labels = nx.get_node_attributes(G, attrib_name)
+    pos = nx.spring_layout(G)
+    nx.draw_networkx_labels(G, pos=pos, labels={n:lab for n,lab in labels.items() if n in pos})
+    nx.draw(G, pos=pos)
     plt.show()

@@ -1,0 +1,71 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "part": [
+                "car"
+            ],
+            "id": 1
+        },
+        {
+            "part": [
+                "wheel"
+            ],
+            "id": 2
+        },
+        {
+            "part": [
+                "door"
+            ],
+            "id": 3
+        },
+        {
+            "part": [
+                "engine"
+            ],
+            "id": 4
+        },
+        {
+            "part": [
+                "steel",
+                "gum",
+                "paint",
+                "aluminum",
+                "glass"
+            ],
+            "id": 69
+        }
+    ],
+    "links": [
+        {
+            "source": 2,
+            "target": 1
+        },
+        {
+            "source": 3,
+            "target": 1
+        },
+        {
+            "source": 4,
+            "target": 1
+        },
+        {
+            "source": 69,
+            "target": 1
+        },
+        {
+            "source": 69,
+            "target": 2
+        },
+        {
+            "source": 69,
+            "target": 3
+        },
+        {
+            "source": 69,
+            "target": 4
+        }
+    ]
+}
