@@ -14,14 +14,20 @@ def initialize_simulation(graph: nx.DiGraph, hostname: str = "localhost") -> Dic
     :return: dictionary with (node_id, ExampleAgent) mapping
     """
     agents_ids = graph.nodes()
-    neighbours = dict([(agent_id, list(graph.neighbors(agent_id))) for agent_id in agents_ids])
+    neighbours = dict([
+        (agent_id, dict(
+            successors=list(graph.successors(agent_id)), 
+            predecessors=list(graph.predecessors(agent_id))
+            )
+        ) for agent_id in agents_ids
+    ])
     agents = _initialize_agents(agents_ids, neighbours, hostname=hostname)
     initialize_logger()
     for agent in agents.values():
         agent.start()
 
-    for agent in agents.values():
-        agent.stop()
+    # for agent in agents.values():
+    #     agent.stop()
 
     return agents
 
@@ -32,9 +38,12 @@ def _initialize_agents(agent_ids, neighbours_lists,
     agent_username_to_id = {v: k for k, v in agent_usernames.items()}
     FactoryAgent.agent_username_to_id = agent_username_to_id
 
-    neighbours = dict([(agent_usernames[agent_id],
-                        [agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]])
-                       for agent_id in agent_ids])
+    neighbours = dict([
+        (agent_usernames[agent_id], dict(
+            successors=[agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]['successors']],
+            predecessors=[agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]['predecessors']]
+            )
+        ) for agent_id in agent_ids])
     agents = dict()
     for agent_id in agent_ids:
         username = agent_usernames[agent_id]

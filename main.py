@@ -35,4 +35,4 @@ G = graph_utils.load_json(graph_file)
 graph_utils.draw_with_node_attrib(G, 'part')
 workflow = Workflow("factory_materials.json")
 
-#initialize_simulation(G)
+initialize_simulation(G)

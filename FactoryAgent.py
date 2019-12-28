@@ -39,18 +39,19 @@ class FactoryAgent(Agent):
             self.jid = jid
 
         async def run(self):
-            if len(self.agent.neighbours) == 0:
+            if len(self.agent.successors) == 0:
                 print("no neigbhours in", self.jid)
                 await asyncio.sleep(100)
-            receiver = sample(self.agent.neighbours, 1)[0]
-            message = _prepare_message(receiver, dict(id=123, body="hood (here will go class instance)"))
-            await self.send(message)
 
-            receiver_id = FactoryAgent.agent_username_to_id[str(receiver)]
-            agent_id = FactoryAgent.agent_username_to_id[str(self.jid)]
-            FactoryAgent._log(
-                dict(msg_type="send", msg_id=message.metadata["message_id"], sender=agent_id, receiver=receiver_id,
-                        body=message.body))
+            for successor in self.agent.successors:
+                message = _prepare_message(successor, dict(id=123, body="hood (here will go class instance)"))
+                await self.send(message)
+
+                receiver_id = FactoryAgent.agent_username_to_id[str(successor)]
+                agent_id = FactoryAgent.agent_username_to_id[str(self.jid)]
+                FactoryAgent._log(
+                    dict(msg_type="send", msg_id=message.metadata["message_id"], sender=agent_id, receiver=receiver_id,
+                            body=message.body))
 
             await asyncio.sleep(randint(3, 10))
 
@@ -88,14 +89,20 @@ class FactoryAgent(Agent):
         """
         super().__init__(jid=jid, password=password, verify_security=verify_security)
         if neighbours is None:
-            neighbours = list()
+            neighbours = dict()
         self.neighbours = neighbours
+        self.successors = self.neighbours['successors']
+        self.predecessors = self.neighbours['predecessors']
         self.propagate_behav = None
         self.listen_behav = None
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
-        self.propagate_behav = self.ProducePartCyclicBehaviour(self.jid)
-        self.listen_behav = self.ReceivePartBehaviour(self.jid)
-        self.add_behaviour(self.listen_behav)
-        self.add_behaviour(self.propagate_behav)
+
+        if self.successors:
+            self.propagate_behav = self.ProducePartCyclicBehaviour(self.jid)
+            self.add_behaviour(self.propagate_behav)
+        
+        if self.predecessors:
+            self.listen_behav = self.ReceivePartBehaviour(self.jid)
+            self.add_behaviour(self.listen_behav)
