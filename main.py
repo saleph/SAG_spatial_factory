@@ -13,9 +13,12 @@ workflow = Workflow("factory_materials.json")
 
 factoryCreator = FactoryCreator(G)
 factoryCreator.initialize_simulation()
-factoryCreator.root.one()
 
+# wait for agents initialization
+time.sleep(5)
+
+factoryCreator.root.one_shot()
 # while True:
 #     number = input("Give number of cars: ")
 #     for i in range(int(number)):
-#         factoryCreator.root.one
+#         factoryCreator.root.one_shot()
