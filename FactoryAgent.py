@@ -10,7 +10,6 @@ import time
 from spade.template import Template
 
 
-
 def _prepare_message(receiver, information):
     msg = Message(to=receiver)
     msg.body = information['body']
@@ -30,30 +29,33 @@ class FactoryAgent(Agent):
     def _log(cls, message: dict):
         cls.logger.debug(message)
 
-    class ProducePartCyclicBehaviour(CyclicBehaviour):
-        """
-        Part assembly behaviour as spade CyclicBehaviour.
-        """
-        def __init__(self, jid):
-            super().__init__()
-            self.jid = jid
+    def one(self):
+        print(self.username)
 
-        async def run(self):
-            if len(self.agent.successors) == 0:
-                print("no neigbhours in", self.jid)
-                await asyncio.sleep(100)
-
-            for successor in self.agent.successors:
-                message = _prepare_message(successor, dict(id=123, body="hood (here will go class instance)"))
-                await self.send(message)
-
-                receiver_id = FactoryAgent.agent_username_to_id[str(successor)]
-                agent_id = FactoryAgent.agent_username_to_id[str(self.jid)]
-                FactoryAgent._log(
-                    dict(msg_type="send", msg_id=message.metadata["message_id"], sender=agent_id, receiver=receiver_id,
-                            body=message.body))
-
-            await asyncio.sleep(randint(3, 10))
+    # class ProducePartCyclicBehaviour(CyclicBehaviour):
+    #     """
+    #     Part assembly behaviour as spade CyclicBehaviour.
+    #     """
+    #     def __init__(self, jid):
+    #         super().__init__()
+    #         self.jid = jid
+    #
+    #     async def run(self):
+    #         if len(self.agent.successors) == 0:
+    #             print("no neigbhours in", self.jid)
+    #             await asyncio.sleep(100)
+    #
+    #         for successor in self.agent.successors:
+    #             message = _prepare_message(successor, dict(id=123, body="hood (here will go class instance)"))
+    #             await self.send(message)
+    #
+    #             receiver_id = FactoryAgent.agent_username_to_id[str(successor)]
+    #             agent_id = FactoryAgent.agent_username_to_id[str(self.jid)]
+    #             FactoryAgent._log(
+    #                 dict(msg_type="send", msg_id=message.metadata["message_id"], sender=agent_id, receiver=receiver_id,
+    #                         body=message.body))
+    #
+    #         await asyncio.sleep(randint(3, 10))
 
     class ReceivePartBehaviour(CyclicBehaviour):
         """
@@ -90,6 +92,7 @@ class FactoryAgent(Agent):
         super().__init__(jid=jid, password=password, verify_security=verify_security)
         if neighbours is None:
             neighbours = dict()
+        self.username = jid
         self.neighbours = neighbours
         self.successors = self.neighbours['successors']
         self.predecessors = self.neighbours['predecessors']
@@ -99,9 +102,9 @@ class FactoryAgent(Agent):
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
 
-        if self.successors:
-            self.propagate_behav = self.ProducePartCyclicBehaviour(self.jid)
-            self.add_behaviour(self.propagate_behav)
+        # if self.successors:
+        #     self.propagate_behav = self.ProducePartCyclicBehaviour(self.jid)
+        #     self.add_behaviour(self.propagate_behav)
         
         if self.predecessors:
             self.listen_behav = self.ReceivePartBehaviour(self.jid)
