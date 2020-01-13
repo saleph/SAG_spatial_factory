@@ -1,15 +1,13 @@
-import networkx as nx
-import sys
-import graph_utils
-from factory_workflow import Workflow
+from Utils import graph_utils
+from Config.factory_workflow import Workflow
 from FactoryCreator import FactoryCreator
 import time
 
 
-graph_file = "factory_graph.json"
+graph_file = "Config/factory_graph.json"
 G = graph_utils.load_json(graph_file)
 # graph_utils.draw_with_node_attrib(G, 'part')
-workflow = Workflow("factory_materials.json")
+workflow = Workflow("Config/factory_materials.json")
 
 factoryCreator = FactoryCreator(G)
 factoryCreator.initialize_simulation()

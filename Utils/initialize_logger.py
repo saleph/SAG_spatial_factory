@@ -12,7 +12,7 @@ def initialize_logger() -> logging.Logger:
     logger.setLevel(logging.DEBUG)
 
     file_handler = logging.FileHandler(
-        'factory_{0}.log'.format(time.strftime("%Y%m%d-%H%M%S")))
+        'Logs/factory_{0}.log'.format(time.strftime("%Y%m%d-%H%M%S")))
     file_formatter = logging.Formatter(
         "{'time':'%(asctime)s', " +
         "'level': '%(levelname)s', 'message': %(message)s}"

@@ -1,9 +1,9 @@
-from spade import agent
+from DataTypes.AgentType import AgentType
 from FactoryAgent import FactoryAgent
-from initialize_logger import initialize_logger
+from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
+from Utils.initialize_logger import initialize_logger
 import networkx as nx
 from typing import Dict
-import sys
 
 
 class FactoryCreator:
@@ -53,7 +53,7 @@ class FactoryCreator:
         agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                                 for agent_id in agent_ids])
         agent_username_to_id = {v: k for k, v in agent_usernames.items()}
-        FactoryAgent.agent_username_to_id = agent_username_to_id
+        AgentUsernameToIdMapper.agent_username_to_id = agent_username_to_id
 
         neighbours = dict([
             (agent_usernames[agent_id], dict(
@@ -65,6 +65,16 @@ class FactoryCreator:
         agents = dict()
         for agent_id in agent_ids:
             username = agent_usernames[agent_id]
-            agents[agent_id] = FactoryAgent(username, username, neighbours=neighbours[username])
+
+            ##TODO It should be loaded from config
+            agentTypeSetter = {
+                1:  AgentType.CAR,
+                2:  AgentType.WHEEL,
+                3:  AgentType.DOOR,
+                4:  AgentType.ENGINE,
+                69: AgentType.STORAGE
+            }
+
+            agents[agent_id] = FactoryAgent(username, username, neighbours=neighbours[username], agentType=agentTypeSetter.get(agent_id))
         return agents
 
