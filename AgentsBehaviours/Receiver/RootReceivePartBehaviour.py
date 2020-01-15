@@ -28,13 +28,28 @@ class RootReceivePartBehaviour(CyclicBehaviour):
                     dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=agent_id,
                          thread=msg.thread, body=msg.body))
 
-                receivedThread = MessageThread(jsonStr=msg.thread)
+                received_thread = MessageThread(jsonStr=msg.thread)
 
-                ##########################Temporary section#############################################################
-                ##this section should be handled in component one shoot after all request bring responses
-                if receivedThread.message_thread_type == MessageThreadType.CarProduction:
-                    pass
-                ########################################################################################################
+                if received_thread.message_thread_type == MessageThreadType.CarProduction:
+
+                    message_thread_id = received_thread.id
+
+                    index = -1
+                    for i, thread in enumerate(self.agent.message_thread_counter_list):
+                        if thread.thread_id == message_thread_id:
+                            index = i
+                            break
+
+                    if index != -1:
+                        AgentActivityLogger._log("Counter of thread {0} for agent {1} decreased to {2}"
+                            .format(received_thread.id, '1', str(self.agent.message_thread_counter_list[index].getCounterValue()-1)))
+                        if self.agent.message_thread_counter_list[index].decreaseCounter():
+                            del self.agent.message_thread_counter_list[index]
+                            AgentActivityLogger._log("Thread with id {0} removed from thread list of agent {1}"
+                                                     .format(received_thread.id, '1'))
+                            AgentActivityLogger._log("Message thread counter removed. Now root with all ingredients delievered can produce entire car")
+
+
 
             else:
                 print("{}: I did not received any message".format(agent_id))

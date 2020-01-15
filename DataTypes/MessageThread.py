@@ -9,7 +9,7 @@ class MessageThread:
     def __init__(self, id = None, message_thread_type: MessageThreadType = None,
                  message_direction: MessageDirection = None, jsonStr= None ):
 
-        self.id = id
+        self.id = str(id)
         self.message_direction = message_direction
         self.message_thread_type = message_thread_type
 
@@ -20,7 +20,7 @@ class MessageThread:
     def ToJson(self):
 
         result = dict()
-        result["id"] = self.id;
+        result["id"] = str(self.id);
         result["message_direction"] = self.message_direction.numerator
         result["message_thread_type"] = self.message_thread_type.numerator
 
@@ -29,7 +29,7 @@ class MessageThread:
 
     def FromJson(self, json_string: str):
         object = json.loads(json_string)
-        self.id = object["id"]
+        self.id = str(object["id"])
         self.message_thread_type = MessageThreadType(object["message_thread_type"])
         self.message_direction = MessageDirection(object["message_direction"])
 

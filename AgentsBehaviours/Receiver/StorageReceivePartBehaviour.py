@@ -37,14 +37,20 @@ class StorageReceivePartBehaviour(CyclicBehaviour):
 
                 if receivedThread.message_thread_type == MessageThreadType.CarProduction:
 
+                    # storage should only send back message to sender, not to all successors
                     for successor in self.agent.successors:
-                        message = _prepare_message(successor, dict(id=123, body="Storage -> Components and Root",
-                                                                     thread=message_thread_str))
-                        receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(successor)]
-                        await self.send(message)
-                        AgentActivityLogger._log(
-                            dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=agent_id, receiver=receiver_id,
-                                 thread=msg.thread, body=msg.body))
+                        if AgentUsernameToIdMapper.agent_username_to_id[str(successor)] == sender_id:
+                            message = _prepare_message(successor, dict(id=123, body="Storage -> Components and Root",
+                                                                         thread=message_thread_str))
+                            receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(successor)]
+                            AgentActivityLogger._log(
+                                "Message arrived at storage, so storage can take some resources and send message back upward")
+                            await self.send(message)
+                            if message.sent:
+                                AgentActivityLogger._log(
+                                    dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=agent_id, receiver=receiver_id,
+                                    thread=msg.thread, body=msg.body))
+                            break
 
 
 

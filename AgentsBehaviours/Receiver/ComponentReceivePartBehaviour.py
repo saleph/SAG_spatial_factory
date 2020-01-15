@@ -4,6 +4,7 @@ from spade.behaviour import CyclicBehaviour
 
 from DataTypes.MessageDirection import MessageDirection
 from DataTypes.MessageThread import MessageThread
+from DataTypes.MessageThreadCounter import MessageThreadCounter
 from Utils.AgentActivityLogger import AgentActivityLogger
 from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
 from Utils.message import _prepare_message
@@ -28,36 +29,58 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
                     dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=agent_id,
                          thread=msg.thread, body=msg.body))
 
+                received_thread = MessageThread(jsonStr=msg.thread)
 
-                receivedThread = MessageThread(jsonStr=msg.thread)
+                if received_thread.message_direction == MessageDirection.Downward:
 
-                if receivedThread.message_direction == MessageDirection.Downward:
+                    message_thread_counter = MessageThreadCounter(received_thread.id)
+                    AgentActivityLogger._log("Thread with id {0} added to thread list of agent {1}"
+                                             .format(received_thread.id, agent_id))
 
                     for predecessor in self.agent.predecessors:
                         message = _prepare_message(predecessor, dict(id=123, body="Component -> Components and Storage",
                                                                                   thread=msg.thread))
                         receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(predecessor)]
                         await self.send(message)
+                        if message.sent:
+                            message_thread_counter.increaseCounter()
+                            AgentActivityLogger._log("Counter of thread {0} for agent {1} increased to {2}"
+                                                     .format(message_thread_counter.thread_id, agent_id,
+                                                             str(message_thread_counter.getCounterValue())))
                         AgentActivityLogger._log(
                             dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=agent_id, receiver=receiver_id,
                              thread=msg.thread, body=msg.body))
 
-                ##TODO Waiting until all responses come back and sending them upward
+                    if message_thread_counter.getCounterValue() != 0:
+                        self.agent.message_thread_counter_list.append(message_thread_counter)
+                        pass
 
                 else:
 
-                    ##########################Temporary section#########################################################
-                    ##this section should be handled in component one shoot after all request bring responses
-                    for successor in self.agent.successors:
-                        message = _prepare_message(successor, dict(id=123, body="Component -> Components and Root",
-                                                                   thread=msg.thread))
-                        receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(successor)]
-                        await self.send(message)
-                        AgentActivityLogger._log(
-                            dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=agent_id,
-                                 receiver=receiver_id,
-                                 thread=msg.thread, body=msg.body))
-                    ##########################Temporary section#########################################################
+                    index = -1
+                    for i, thread in enumerate(self.agent.message_thread_counter_list):
+                        if thread.thread_id == received_thread.id:
+                            index = i
+                            break
+
+                    if index != -1:
+                        AgentActivityLogger._log("Counter of thread {0} for agent {1} decreased to {2}"
+                            .format(received_thread.id, agent_id, str(self.agent.message_thread_counter_list[index].getCounterValue() - 1)))
+
+                        if self.agent.message_thread_counter_list[index].decreaseCounter():
+                            del self.agent.message_thread_counter_list[index]
+                            AgentActivityLogger._log("Thread with id {0} removed from thread list of agent {1}"
+                                                     .format(received_thread.id, agent_id))
+
+                            for successor in self.agent.successors:
+                                message = _prepare_message(successor, dict(id=123, body="Component -> Components and Root",
+                                                                           thread=msg.thread))
+                                receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(successor)]
+                                await self.send(message)
+                                AgentActivityLogger._log(
+                                    dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=agent_id,
+                                         receiver=receiver_id,
+                                         thread=msg.thread, body=msg.body))
 
             else:
                 print("{}: I did not received any message".format(agent_id))
