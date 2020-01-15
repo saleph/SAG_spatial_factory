@@ -21,7 +21,7 @@ class FactoryAgent(Agent):
         self.add_behaviour(RootCreateCarBehaviour(self.jid))
 
 
-    def __init__(self, jid, password, verify_security=False, neighbours=None, agentType=None):
+    def __init__(self, jid, password, verify_security=False, neighbours=None, agent_type=None):
         """
         Simulation agent initializer.
         :param jid: agent username in XMPP server, e.g. 'agent 0'
@@ -39,7 +39,9 @@ class FactoryAgent(Agent):
         self.predecessors = self.neighbours['predecessors']
         self.propagate_behav = None
         self.listen_behav = None
-        self.agentType = agentType
+        self.agentType = agent_type
+
+        self.message_thread_counter_list = []
 
     def setAgentAsRootAgent(self):
         self.listen_behav = RootReceivePartBehaviour(self.jid)

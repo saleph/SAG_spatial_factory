@@ -67,7 +67,7 @@ class FactoryCreator:
             username = agent_usernames[agent_id]
 
             ##TODO It should be loaded from config
-            agentTypeSetter = {
+            agent_type_setter = {
                 1:  AgentType.CAR,
                 2:  AgentType.WHEEL,
                 3:  AgentType.DOOR,
@@ -75,6 +75,6 @@ class FactoryCreator:
                 69: AgentType.STORAGE
             }
 
-            agents[agent_id] = FactoryAgent(username, username, neighbours=neighbours[username], agentType=agentTypeSetter.get(agent_id))
+            agents[agent_id] = FactoryAgent(username, username, neighbours=neighbours[username], agent_type=agent_type_setter.get(agent_id))
         return agents
 
