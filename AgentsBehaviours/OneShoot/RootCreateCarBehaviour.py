@@ -1,5 +1,6 @@
 import asyncio
 from random import randint
+import uuid
 
 from spade.behaviour import OneShotBehaviour
 
@@ -22,7 +23,8 @@ class RootCreateCarBehaviour(OneShotBehaviour):
             print("no neigbhours in", self.jid)
             await asyncio.sleep(100)
 
-        message_thread = MessageThread(id=0, message_thread_type=MessageThreadType.CarProduction,
+        thread_id = uuid.uuid4()
+        message_thread = MessageThread(id=str(thread_id), message_thread_type=MessageThreadType.CarProduction,
                                        message_direction=MessageDirection.Downward)
         message_thread_str = message_thread.ToJson()
 
