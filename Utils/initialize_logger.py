@@ -1,5 +1,6 @@
 import logging
 import time
+import pathlib
 
 
 def initialize_logger() -> logging.Logger:
@@ -11,6 +12,7 @@ def initialize_logger() -> logging.Logger:
     logger = logging.getLogger("factory")
     logger.setLevel(logging.DEBUG)
 
+    pathlib.Path('Logs').mkdir(parents=True, exist_ok=True)
     file_handler = logging.FileHandler(
         'Logs/factory_{0}.log'.format(time.strftime("%Y%m%d-%H%M%S")))
     file_formatter = logging.Formatter(
