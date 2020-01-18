@@ -16,6 +16,7 @@ factoryCreator.initialize_simulation()
 time.sleep(5)
 
 factoryCreator.root.one_shot()
+factoryCreator.agents[2].kill()
 # while True:
 #     number = input("Give number of cars: ")
 #     for i in range(int(number)):

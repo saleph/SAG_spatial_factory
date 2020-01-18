@@ -19,6 +19,9 @@ class FactoryCreator:
         self.graph = graph
         self.hostname = hostname
         self.root = None
+        self.agents = dict()
+        self.full_neighbours_map = dict()
+        self.agent_usernames = dict()
 
     def initialize_simulation(self) -> Dict[int, FactoryAgent]:
         """
@@ -39,42 +42,48 @@ class FactoryCreator:
             )
              ) for agent_id in agents_ids
         ])
-        agents = self._initialize_agents(agents_ids, neighbours, hostname=self.hostname)
+        self._initialize_agents(agents_ids, neighbours, hostname=self.hostname)
         initialize_logger()
-        for agent in agents.values():
+        for agent in self.agents.values():
             agent.start()
 
-        self.root = agents[root_id]
+        self.root = self.agents[root_id]
 
-        return agents
+        return self.agents
 
     def _initialize_agents(self, agent_ids, neighbours_lists,
                            basename="agent", hostname="localhost"):
-        agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
+        self.agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                                 for agent_id in agent_ids])
-        agent_username_to_id = {v: k for k, v in agent_usernames.items()}
+        agent_username_to_id = {v: k for k, v in self.agent_usernames.items()}
         AgentUsernameToIdMapper.agent_username_to_id = agent_username_to_id
 
-        neighbours = dict([
-            (agent_usernames[agent_id], dict(
-                successors=[agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]['successors']],
-                predecessors=[agent_usernames[neighbour_id] for neighbour_id in
+        self.full_neighbours_map = dict([
+            (self.agent_usernames[agent_id], dict(
+                successors=[self.agent_usernames[neighbour_id] for neighbour_id in neighbours_lists[agent_id]['successors']],
+                predecessors=[self.agent_usernames[neighbour_id] for neighbour_id in
                               neighbours_lists[agent_id]['predecessors']]
             )
              ) for agent_id in agent_ids])
-        agents = dict()
+
         for agent_id in agent_ids:
-            username = agent_usernames[agent_id]
+            self.create_agent(agent_id)
 
-            ##TODO It should be loaded from config
-            agent_type_setter = {
-                1:  AgentType.CAR,
-                2:  AgentType.WHEEL,
-                3:  AgentType.DOOR,
-                4:  AgentType.ENGINE,
-                69: AgentType.STORAGE
-            }
 
-            agents[agent_id] = FactoryAgent(username, username, neighbours=neighbours[username], agent_type=agent_type_setter.get(agent_id))
-        return agents
+    def create_agent(self, agent_id):
+        username = self.agent_usernames[agent_id]
+        ##TODO It should be loaded from config
+        agent_type_setter = {
+            1:  AgentType.CAR,
+            2:  AgentType.WHEEL,
+            3:  AgentType.DOOR,
+            4:  AgentType.ENGINE,
+            69: AgentType.STORAGE
+        }
+        
+        storage_username = "agent_69@localhost"
+        agent = FactoryAgent(username, username, factory_creator=self, storage_username=storage_username,
+                neighbours=self.full_neighbours_map[username], agent_type=agent_type_setter.get(agent_id))
+        self.agents[agent_id] = agent
+        return agent
 
