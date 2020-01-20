@@ -24,7 +24,7 @@ class FactoryAgent(Agent):
         self.add_behaviour(KillAgentBehaviour())
 
     def one_shot(self):
-        self.add_behaviour(RootCreateCarBehaviour(self.jid))
+        self.add_behaviour(RootCreateCarBehaviour(self.jid, self.workflow))
 
     def send_respawn_notification(self):
         self.add_behaviour(AgentAfterBreakDownBehaviour())
@@ -33,7 +33,7 @@ class FactoryAgent(Agent):
         self.add_behaviour(RetransmissionBehaviour(respawned_target))
 
 
-    def __init__(self, jid, password, *, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None):
+    def __init__(self, jid, password, *, workflow, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None):
         """
         Simulation agent initializer.
         :param jid: agent username in XMPP server, e.g. 'agent 0'
@@ -54,6 +54,7 @@ class FactoryAgent(Agent):
         self.agentType = agent_type
         self.factory_creator = factory_creator
         self.storage_username = storage_username
+        self.workflow = workflow
 
         template = Template()
         template.set_metadata("performative", "inform")
@@ -70,22 +71,16 @@ class FactoryAgent(Agent):
 
     def setAgentAsComponentAgent(self):
         self.prepare_heartbeat()
-        self.listen_behav = ComponentReceivePartBehaviour(self.jid)
+        self.listen_behav = ComponentReceivePartBehaviour(self.jid, self.workflow, self.agentType)
         self.add_behaviour(self.listen_behav, self.common_template)
 
     def setAgentAsStarageAgent(self):
-        self.listen_behav = StorageReceivePartBehaviour(self.jid)
+        self.listen_behav = StorageReceivePartBehaviour(self.jid, self.workflow)
         self.add_behaviour(self.listen_behav, self.common_template)
 
 
     async def setup(self):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
-
-        # if self.successors:
-        #     self.propagate_behav = self.ProducePartCyclicBehaviour(self.jid)
-        #     self.add_behaviour(self.propagate_behav)
-        
-        # if self.predecessors:
 
         agentTypeSwitch = {
             AgentType.CAR: self.setAgentAsRootAgent,

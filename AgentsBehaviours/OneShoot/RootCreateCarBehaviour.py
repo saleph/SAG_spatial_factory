@@ -1,6 +1,7 @@
 import asyncio
 from random import randint
 import uuid
+import json
 
 from spade.behaviour import OneShotBehaviour
 
@@ -15,9 +16,10 @@ from Utils.message import _prepare_message
 
 class RootCreateCarBehaviour(OneShotBehaviour):
 
-    def __init__(self, jid):
+    def __init__(self, jid, workflow):
         super().__init__()
         self.jid = jid
+        self.workflow = workflow
 
     async def run(self):
         if len(self.agent.predecessors) == 0:
@@ -33,9 +35,8 @@ class RootCreateCarBehaviour(OneShotBehaviour):
         AgentActivityLogger._log("Thread with id {0} added to thread list of agent {1}"
                                  .format(thread_id, '1'))
 
-        body = "Root -> Components and Storage" #TODO Body content filtering. More complex desc it in ComponentReceiveBehaviour.
-
         for predecessor in self.agent.predecessors:
+            body = json.dumps(self.workflow.get_ingredients("car"))
             message = _prepare_message(predecessor, dict(id=123, body=body,
                                                          thread=message_thread_str))
             await self.send(message)

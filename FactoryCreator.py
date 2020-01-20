@@ -1,4 +1,5 @@
 from DataTypes.AgentType import AgentType
+from Config.factory_workflow import Workflow
 from FactoryAgent import FactoryAgent
 from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
 from Utils.initialize_logger import initialize_logger
@@ -11,12 +12,13 @@ class FactoryCreator:
     Simulation and agent initializer
     """
 
-    def __init__(self, graph: nx.DiGraph, hostname: str = "localhost"):
+    def __init__(self, graph: nx.DiGraph, workflow: Workflow, hostname: str = "localhost"):
         """"
         :param graph: graph representing connections and trust between agents (as edge parameter 'trust')
         :param hostname: hostname of the nodes in spade
         """
         self.graph = graph
+        self.workflow = workflow
         self.hostname = hostname
         self.root = None
         self.agents = dict()
@@ -88,7 +90,7 @@ class FactoryCreator:
         # TODO 69 from workflow
         storage_username = "agent_" + str(69) + "@localhost"
 
-        agent = FactoryAgent(username, username, factory_creator=self, storage_username=storage_username,
+        agent = FactoryAgent(username, username, workflow=self.workflow, factory_creator=self, storage_username=storage_username,
                              neighbours=self.full_neighbours_map[username], agent_type=agent_type)
         self.agents[agent_id] = agent
         self.agents[agent_id].respawn_after_breakdown = respawn_after_breakdown;

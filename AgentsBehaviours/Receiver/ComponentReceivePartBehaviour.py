@@ -1,4 +1,5 @@
 import traceback
+import json
 
 from spade.behaviour import CyclicBehaviour
 
@@ -8,6 +9,7 @@ from DataTypes.MessageThreadCounter import MessageThreadCounter
 from Utils.AgentActivityLogger import AgentActivityLogger
 from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
 from Utils.message import _prepare_message
+from DataTypes.AgentType import AgentType
 
 
 class ComponentReceivePartBehaviour(CyclicBehaviour):
@@ -15,10 +17,12 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
     Gossip receiver behaviour as spade CyclicBehaviour.
     """
 
-    def __init__(self, jid):
+    def __init__(self, jid, workflow, agentType):
         super().__init__()
         self.jid = jid
         self.agent_id = AgentUsernameToIdMapper.agent_username_to_id[str(self.jid)]
+        self.workflow = workflow
+        self.agentType = agentType
 
     async def run(self):
         try:
@@ -52,8 +56,6 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
                 AgentActivityLogger._log("Thread with id {0} added to thread list of agent {1}"
                                             .format(received_thread.id, str(self.agent_id)))
 
-                body="Component -> Components and Storage"
-
                 #TODO Body content filtering. It's not so diffucult as the desc is very long.
                 # We want to check what agent can do with list of resources.
                 # As if we have non-storage component, so it doesnt know what can do with 'steel', because it produces
@@ -64,6 +66,13 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
                 # into basic resources and just send such resticted list of resources as body to its predecessors (children)
                 # Agent is obligated to know stuff from factory_material.json like "what is engine made of?"
 
+                agentTypeSwitch = {
+                    AgentType.DOOR: self.workflow.get_ingredients("door"),
+                    AgentType.WHEEL: self.workflow.get_ingredients("wheel"),
+                    AgentType.ENGINE: self.workflow.get_ingredients("engine"),
+                    AgentType.UNKNOWN: Exception("Invalid agent type")
+                }
+                body = json.dumps(agentTypeSwitch.get(self.agentType))
                 for predecessor in self.agent.predecessors:
                     message = _prepare_message(predecessor, dict(id=123, body=body,
                                                                                 thread=msg.thread))
@@ -79,7 +88,7 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
                                                             str(message_thread_counter.getCounterValue())))
                     AgentActivityLogger._log(
                         dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=self.agent_id, receiver=receiver_id,
-                            thread=msg.thread, body=msg.body))
+                            thread=msg.thread, body=body))
 
                 if message_thread_counter.getCounterValue() != 0:
                     self.agent.message_thread_counter_list.append(message_thread_counter)
@@ -103,7 +112,17 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
                                                     .format(received_thread.id, str(self.agent_id)))
 
                         for successor in self.agent.successors:
-                            message = _prepare_message(successor, dict(id=123, body="Component -> Components and Root",
+
+                            agentTypeSwitch = {
+                                AgentType.DOOR: '{door: 4}',
+                                AgentType.WHEEL: '{wheel: 4}',
+                                AgentType.ENGINE: '{engine: 4}',
+                                AgentType.UNKNOWN: Exception("Invalid agent type")
+                            }
+                            msg_body = json.dumps(agentTypeSwitch.get(self.agentType))
+
+                            AgentActivityLogger._log("PART: " + msg_body + " CREATED")
+                            message = _prepare_message(successor, dict(id=123, body=msg_body,
                                                                         thread=msg.thread))
                             receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(successor)]
                             await self.send(message)

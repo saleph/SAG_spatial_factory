@@ -52,7 +52,9 @@ class RootReceivePartBehaviour(CyclicBehaviour):
                             del self.agent.message_thread_counter_list[index]
                             AgentActivityLogger._log("Thread with id {0} removed from thread list of agent {1}"
                                                      .format(received_thread.id, '1'))
-                            AgentActivityLogger._log("Message thread counter removed. Now root with all ingredients delievered can produce entire car")
+                            AgentActivityLogger._log("CAR CREATED")
+
+
 
 
             else:

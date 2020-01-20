@@ -3,13 +3,12 @@ from Config.factory_workflow import Workflow
 from FactoryCreator import FactoryCreator
 import time
 
-
 graph_file = "Config/factory_graph.json"
 G = graph_utils.load_json(graph_file)
 # graph_utils.draw_with_node_attrib(G, 'part')
 workflow = Workflow("Config/factory_materials.json")
 
-factoryCreator = FactoryCreator(G)
+factoryCreator = FactoryCreator(G, workflow)
 factoryCreator.initialize_simulation()
 
 # wait for agents initialization
