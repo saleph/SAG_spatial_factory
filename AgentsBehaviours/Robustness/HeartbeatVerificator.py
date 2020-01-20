@@ -1,11 +1,6 @@
-import traceback
-
-import networkx as nx
 from spade.behaviour import CyclicBehaviour
-import asyncio
 import time
 from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
-from Utils.message import _prepare_system_control_message
 from Utils.AgentActivityLogger import AgentActivityLogger
 
 
@@ -41,5 +36,5 @@ class HeartbeatVerificator(CyclicBehaviour):
         print(">>>>>>>>>")
         AgentActivityLogger._log(dict(action="agent_recovery", actor=self.owning_agent, recovering_actor=predecessor))
         agent_id = AgentUsernameToIdMapper.agent_username_to_id[predecessor]
-        agent = self.agent_factory.create_agent(agent_id)
+        agent = self.agent_factory.create_agent(agent_id, True)
         await agent.start()

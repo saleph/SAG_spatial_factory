@@ -22,6 +22,7 @@ class FactoryCreator:
         self.agents = dict()
         self.full_neighbours_map = dict()
         self.agent_usernames = dict()
+        self.respawn_after_breakdown = False;
 
     def initialize_simulation(self) -> Dict[int, FactoryAgent]:
         """
@@ -70,7 +71,7 @@ class FactoryCreator:
             self.create_agent(agent_id)
 
 
-    def create_agent(self, agent_id):
+    def create_agent(self, agent_id, respawn_after_breakdown = False):
         username = self.agent_usernames[agent_id]
         ##TODO It should be loaded from config
         agent_type_setter = {
@@ -85,5 +86,6 @@ class FactoryCreator:
         agent = FactoryAgent(username, username, factory_creator=self, storage_username=storage_username,
                 neighbours=self.full_neighbours_map[username], agent_type=agent_type_setter.get(agent_id))
         self.agents[agent_id] = agent
+        self.agents[agent_id].respawn_after_breakdown = respawn_after_breakdown;
         return agent
 

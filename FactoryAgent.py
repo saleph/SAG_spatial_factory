@@ -1,10 +1,8 @@
-import asyncio
-import traceback
-from random import sample, randint
-
 from spade.agent import Agent
 from spade.template import Template
 
+from AgentsBehaviours.OneShoot.AgentAfterBreakDownBehaviour import AgentAfterBreakDownBehaviour
+from AgentsBehaviours.OneShoot.RetransmissionBehaviour import RetransmissionBehaviour
 from AgentsBehaviours.OneShoot.RootCreateCarBehaviour import RootCreateCarBehaviour
 from AgentsBehaviours.OneShoot.KillAgentBehaviour import KillAgentBehaviour
 from AgentsBehaviours.Receiver.ComponentReceivePartBehaviour import ComponentReceivePartBehaviour
@@ -13,6 +11,8 @@ from AgentsBehaviours.Receiver.StorageReceivePartBehaviour import StorageReceive
 from AgentsBehaviours.Robustness.Heartbeat import Heartbeat
 from AgentsBehaviours.Robustness.HeartbeatVerificator import HeartbeatVerificator
 from DataTypes.AgentType import AgentType
+from Utils.AgentActivityLogger import AgentActivityLogger
+from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
 
 
 class FactoryAgent(Agent):
@@ -25,6 +25,12 @@ class FactoryAgent(Agent):
 
     def one_shot(self):
         self.add_behaviour(RootCreateCarBehaviour(self.jid))
+
+    def send_respawn_notification(self):
+        self.add_behaviour(AgentAfterBreakDownBehaviour())
+
+    def resend_missing_messages(self, respawned_target):
+        self.add_behaviour(RetransmissionBehaviour(respawned_target))
 
 
     def __init__(self, jid, password, *, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None):
@@ -54,6 +60,8 @@ class FactoryAgent(Agent):
         self.common_template = template
 
         self.message_thread_counter_list = []
+        self.sent_messages_registry = []
+        self.respawn_after_breakdown = False;
 
     def setAgentAsRootAgent(self):
         self.prepare_heartbeat()
@@ -100,6 +108,27 @@ class FactoryAgent(Agent):
             template.set_metadata("performative", Heartbeat.performative)
             heartbeat_verificator = HeartbeatVerificator(predecessors_wo_storage, agent_factory=self.factory_creator, owning_agent=self.name)
             self.add_behaviour(heartbeat_verificator, template)
+
+    def remove_entry_from_sent_messages_registry(self, sender_id = None, thread_id = None):
+
+        entries_ids_to_remove = []
+        include_all_threads = True if thread_id is None else False
+
+        for i in range(len(self.sent_messages_registry)):
+            temp_sender_id = AgentUsernameToIdMapper.agent_username_to_id[str(self.sent_messages_registry[i]["sender"])]
+            if sender_id == temp_sender_id and \
+                    (include_all_threads is True or self.sent_messages_registry[i]["thread"].id == thread_id):
+                entries_ids_to_remove.append(i)
+
+        listSize = len(entries_ids_to_remove);
+
+        for i in range(listSize):
+            j = listSize - i - 1;
+            AgentActivityLogger._log("Deleted entry of {0} for thread {1} from {2} "
+                                     .format(self.username, self.sent_messages_registry[entries_ids_to_remove[j]]["thread"].id,
+                                    self.sent_messages_registry[entries_ids_to_remove[j]]["sender"]))
+            del self.sent_messages_registry[entries_ids_to_remove[j]]
+
 
 
 

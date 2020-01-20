@@ -33,11 +33,15 @@ class RootCreateCarBehaviour(OneShotBehaviour):
         AgentActivityLogger._log("Thread with id {0} added to thread list of agent {1}"
                                  .format(thread_id, '1'))
 
+        body = "Root -> Components and Storage" #TODO Body content filtering. More complex desc it in ComponentReceiveBehaviour.
+
         for predecessor in self.agent.predecessors:
-            message = _prepare_message(predecessor, dict(id=123, body="Root -> Components and Storage",
+            message = _prepare_message(predecessor, dict(id=123, body=body,
                                                          thread=message_thread_str))
             await self.send(message)
             if(message.sent):
+                self.agent.sent_messages_registry.append(dict(sender=predecessor,thread=message_thread,body=body))
+                AgentActivityLogger._log("response added to registry")
                 message_thread_counter.increaseCounter()
                 AgentActivityLogger._log("Counter of thread {0} for agent {1} increased to {2}"
                                          .format(thread_id, '1', str(message_thread_counter.getCounterValue())))

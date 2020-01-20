@@ -2,7 +2,6 @@ import traceback
 
 from spade.behaviour import CyclicBehaviour
 
-from DataTypes.MessageDirection import MessageDirection
 from DataTypes.MessageThread import MessageThread
 from DataTypes.MessageThreadType import MessageThreadType
 from Utils.AgentActivityLogger import AgentActivityLogger
@@ -45,6 +44,10 @@ class StorageReceivePartBehaviour(CyclicBehaviour):
                             receiver_id = AgentUsernameToIdMapper.agent_username_to_id[str(successor)]
                             AgentActivityLogger._log(
                                 "Message arrived at storage, so storage can take some resources and send message back upward")
+
+                            #TODO Checking needed resources from body and fetching them from storage.
+                            # Amount of stuff is about to be changed and it should take a few secs
+
                             await self.send(message)
                             if message.sent:
                                 AgentActivityLogger._log(

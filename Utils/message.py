@@ -19,3 +19,10 @@ def _prepare_system_control_message(receiver, *, performative):
     msg.body = "heartbeat"
     msg.set_metadata("performative", performative)
     return msg
+
+def _prepare_respawn_notification(receiver, *, performative="inform"):
+    msg = Message(to=receiver)
+    msg.body = "respawn_notification"
+    msg.thread = None
+    msg.set_metadata("performative", performative)
+    return msg

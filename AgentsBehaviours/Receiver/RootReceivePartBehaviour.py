@@ -24,13 +24,17 @@ class RootReceivePartBehaviour(CyclicBehaviour):
             if msg is not None:
                 sender_id = AgentUsernameToIdMapper.agent_username_to_id[str(msg.sender)]
 
-                AgentActivityLogger._log(
-                    dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=agent_id,
-                         thread=msg.thread, body=msg.body))
 
                 received_thread = MessageThread(jsonStr=msg.thread)
 
-                if received_thread.message_thread_type == MessageThreadType.CarProduction:
+                if msg.thread is None and msg.body == "respawn_notification":
+                    self.agent.resend_missing_messages(msg.sender)
+
+                elif received_thread.message_thread_type == MessageThreadType.CarProduction:
+
+                    AgentActivityLogger._log(
+                        dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=agent_id,
+                             thread=msg.thread, body=msg.body))
 
                     message_thread_id = received_thread.id
 
@@ -43,12 +47,12 @@ class RootReceivePartBehaviour(CyclicBehaviour):
                     if index != -1:
                         AgentActivityLogger._log("Counter of thread {0} for agent {1} decreased to {2}"
                             .format(received_thread.id, '1', str(self.agent.message_thread_counter_list[index].getCounterValue()-1)))
+                        self.agent.remove_entry_from_sent_messages_registry(sender_id, received_thread.id)
                         if self.agent.message_thread_counter_list[index].decreaseCounter():
                             del self.agent.message_thread_counter_list[index]
                             AgentActivityLogger._log("Thread with id {0} removed from thread list of agent {1}"
                                                      .format(received_thread.id, '1'))
                             AgentActivityLogger._log("Message thread counter removed. Now root with all ingredients delievered can produce entire car")
-
 
 
             else:
