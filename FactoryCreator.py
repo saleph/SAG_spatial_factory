@@ -31,10 +31,22 @@ class FactoryCreator:
         """
         agents_ids = self.graph.nodes()
         root_id = int()
+        storage_username = ""
+        agent_type_setter = {}
 
         for a_id in agents_ids:
             if str("car") in self.graph.nodes[a_id]["part"]:
                 root_id = a_id
+                agent_type_setter[a_id] = AgentType.CAR
+            elif str("wheel") in self.graph.nodes[a_id]["part"]:
+                agent_type_setter[a_id] = AgentType.WHEEL
+            elif str("door") in self.graph.nodes[a_id]["part"]:
+                agent_type_setter[a_id] = AgentType.DOOR
+            elif str("engine") in self.graph.nodes[a_id]["part"]:
+                agent_type_setter[a_id] = AgentType.ENGINE
+            else:
+                agent_type_setter[a_id] = AgentType.STORAGE
+                storage_username = "agent_" + str(a_id) + "@localhost"
 
         neighbours = dict([
             (agent_id, dict(
@@ -43,7 +55,7 @@ class FactoryCreator:
             )
              ) for agent_id in agents_ids
         ])
-        self._initialize_agents(agents_ids, neighbours, hostname=self.hostname)
+        self._initialize_agents(agents_ids, neighbours, storage_username, agent_type_setter, hostname=self.hostname)
         initialize_logger()
         for agent in self.agents.values():
             agent.start()
@@ -52,7 +64,7 @@ class FactoryCreator:
 
         return self.agents
 
-    def _initialize_agents(self, agent_ids, neighbours_lists,
+    def _initialize_agents(self, agent_ids, neighbours_lists, storage_username, agent_type_setter,
                            basename="agent", hostname="localhost"):
         self.agent_usernames = dict([(agent_id, "{}_{}@{}".format(basename, agent_id, hostname))
                                 for agent_id in agent_ids])
@@ -68,21 +80,12 @@ class FactoryCreator:
              ) for agent_id in agent_ids])
 
         for agent_id in agent_ids:
-            self.create_agent(agent_id)
+            self.create_agent(agent_id, storage_username, agent_type_setter)
 
 
-    def create_agent(self, agent_id, respawn_after_breakdown = False):
+    def create_agent(self, agent_id, storage_username, agent_type_setter, respawn_after_breakdown = False):
         username = self.agent_usernames[agent_id]
-        ##TODO It should be loaded from config
-        agent_type_setter = {
-            1:  AgentType.CAR,
-            2:  AgentType.WHEEL,
-            3:  AgentType.DOOR,
-            4:  AgentType.ENGINE,
-            69: AgentType.STORAGE
-        }
-        
-        storage_username = "agent_69@localhost"
+
         agent = FactoryAgent(username, username, factory_creator=self, storage_username=storage_username,
                 neighbours=self.full_neighbours_map[username], agent_type=agent_type_setter.get(agent_id))
         self.agents[agent_id] = agent
