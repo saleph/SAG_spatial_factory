@@ -81,7 +81,7 @@ class FactoryCreator:
         agent_type = node["type"]
         produced_components = node["part"]
 
-        agent = FactoryAgent(username, username, workflow=self.workflow, factory_creator=self, storage_username=self.storage_username,
+        agent = FactoryAgent(username, username, graph=self.graph, workflow=self.workflow, factory_creator=self, storage_username=self.storage_username,
                              neighbours=self.full_neighbours_map[username], agent_type=agent_type, 
                              produced_components=produced_components)
         self.agents[agent_id] = agent

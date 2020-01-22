@@ -23,7 +23,7 @@ class FactoryAgent(Agent):
         self.add_behaviour(KillAgentBehaviour())
 
     def one_shot(self):
-        self.add_behaviour(RootCreateCarBehaviour(self.jid, self.workflow))
+        self.add_behaviour(RootCreateCarBehaviour(self.jid, self.workflow, self.graph))
 
     def send_respawn_notification(self):
         self.add_behaviour(AgentAfterBreakDownBehaviour())
@@ -32,7 +32,7 @@ class FactoryAgent(Agent):
         self.add_behaviour(RetransmissionBehaviour(respawned_target))
 
 
-    def __init__(self, jid, password, *, workflow, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None, produced_components=None):
+    def __init__(self, jid, password, *, graph, workflow, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None, produced_components=None):
         """
         Simulation agent initializer.
         :param jid: agent username in XMPP server, e.g. 'agent 0'
@@ -55,6 +55,7 @@ class FactoryAgent(Agent):
         self.storage_username = storage_username
         self.produced_components = produced_components
         self.workflow = workflow
+        self.graph = graph
 
         template = Template()
         template.set_metadata("performative", "inform")
@@ -71,7 +72,7 @@ class FactoryAgent(Agent):
 
     def setAgentAsComponentAgent(self):
         self.prepare_heartbeat()
-        self.listen_behav = ComponentReceivePartBehaviour(self.jid, self.workflow, self.produced_components)
+        self.listen_behav = ComponentReceivePartBehaviour(self.jid, self.workflow, self.graph, self.produced_components)
         self.add_behaviour(self.listen_behav, self.common_template)
 
     def setAgentAsStarageAgent(self):
