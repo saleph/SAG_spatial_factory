@@ -62,7 +62,7 @@ class FactoryAgent(Agent):
 
         self.message_thread_counter_list = []
         self.sent_messages_registry = []
-        self.respawn_after_breakdown = False;
+        self.respawn_after_breakdown = False
 
     def setAgentAsRootAgent(self):
         self.prepare_heartbeat()
@@ -112,10 +112,10 @@ class FactoryAgent(Agent):
                     (include_all_threads is True or self.sent_messages_registry[i]["thread"].id == thread_id):
                 entries_ids_to_remove.append(i)
 
-        listSize = len(entries_ids_to_remove);
+        listSize = len(entries_ids_to_remove)
 
         for i in range(listSize):
-            j = listSize - i - 1;
+            j = listSize - i - 1
             AgentActivityLogger._log("Deleted entry of {0} for thread {1} from {2} "
                                      .format(self.username, self.sent_messages_registry[entries_ids_to_remove[j]]["thread"].id,
                                     self.sent_messages_registry[entries_ids_to_remove[j]]["sender"]))

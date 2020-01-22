@@ -85,5 +85,5 @@ class FactoryCreator:
                              neighbours=self.full_neighbours_map[username], agent_type=agent_type, 
                              produced_components=produced_components)
         self.agents[agent_id] = agent
-        self.agents[agent_id].respawn_after_breakdown = respawn_after_breakdown;
+        self.agents[agent_id].respawn_after_breakdown = respawn_after_breakdown
         return agent

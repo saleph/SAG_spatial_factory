@@ -36,9 +36,6 @@ class Workflow(object):
         all_materials = self.get_ingredients(part_name)
         return {mat: quantity for mat, quantity in all_materials.items() if mat not in base_mats_names}
 
-    def get_production_time(self, part_name):
-        return self.workflow[part_name]['production_time']
-
     @staticmethod
     def __load_workflow(filename) -> dict:
         if not os.path.isfile(filename):
