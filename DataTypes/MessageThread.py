@@ -20,7 +20,7 @@ class MessageThread:
     def ToJson(self):
 
         result = dict()
-        result["id"] = str(self.id);
+        result["id"] = str(self.id)
         result["message_direction"] = self.message_direction.numerator
         result["message_thread_type"] = self.message_thread_type.numerator
 

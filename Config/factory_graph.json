@@ -7,25 +7,29 @@
             "part": [
                 "car"
             ],
-            "id": 1
+            "id": 1,
+            "type": "root"
         },
         {
             "part": [
                 "wheel"
             ],
-            "id": 2
+            "id": 2,
+            "type": "component"
         },
         {
             "part": [
                 "door"
             ],
-            "id": 3
+            "id": 3,
+            "type": "component"
         },
         {
             "part": [
                 "engine"
             ],
-            "id": 4
+            "id": 4,
+            "type": "component"
         },
         {
             "part": [
@@ -35,7 +39,8 @@
                 "aluminum",
                 "glass"
             ],
-            "id": 69
+            "id": 9876,
+            "type": "storage"
         }
     ],
     "links": [
@@ -52,19 +57,19 @@
             "target": 1
         },
         {
-            "source": 69,
+            "source": 9876,
             "target": 1
         },
         {
-            "source": 69,
+            "source": 9876,
             "target": 2
         },
         {
-            "source": 69,
+            "source": 9876,
             "target": 3
         },
         {
-            "source": 69,
+            "source": 9876,
             "target": 4
         }
     ]

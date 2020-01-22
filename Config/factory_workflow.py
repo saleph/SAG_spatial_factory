@@ -26,6 +26,16 @@ class Workflow(object):
     def get_ingredients(self, part_name):
         return self.workflow[part_name]['ingredients']
 
+    def get_base_ingredients_for_part_with_quantities(self, part_name):
+        base_mats_names = self.get_base_materials()
+        all_materials = self.get_ingredients(part_name)
+        return {mat: quantity for mat, quantity in all_materials.items() if mat in base_mats_names}
+
+    def get_complex_ingredients_for_part_with_quantities(self, part_name):
+        base_mats_names = self.get_base_materials()
+        all_materials = self.get_ingredients(part_name)
+        return {mat: quantity for mat, quantity in all_materials.items() if mat not in base_mats_names}
+
     def get_production_time(self, part_name):
         return self.workflow[part_name]['production_time']
 

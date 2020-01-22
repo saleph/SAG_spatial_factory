@@ -10,7 +10,6 @@ from AgentsBehaviours.Receiver.RootReceivePartBehaviour import RootReceivePartBe
 from AgentsBehaviours.Receiver.StorageReceivePartBehaviour import StorageReceivePartBehaviour
 from AgentsBehaviours.Robustness.Heartbeat import Heartbeat
 from AgentsBehaviours.Robustness.HeartbeatVerificator import HeartbeatVerificator
-from DataTypes.AgentType import AgentType
 from Utils.AgentActivityLogger import AgentActivityLogger
 from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
 
@@ -33,7 +32,7 @@ class FactoryAgent(Agent):
         self.add_behaviour(RetransmissionBehaviour(respawned_target))
 
 
-    def __init__(self, jid, password, *, workflow, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None):
+    def __init__(self, jid, password, *, workflow, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None, produced_components=None):
         """
         Simulation agent initializer.
         :param jid: agent username in XMPP server, e.g. 'agent 0'
@@ -54,6 +53,7 @@ class FactoryAgent(Agent):
         self.agentType = agent_type
         self.factory_creator = factory_creator
         self.storage_username = storage_username
+        self.produced_components = produced_components
         self.workflow = workflow
 
         template = Template()
@@ -71,7 +71,7 @@ class FactoryAgent(Agent):
 
     def setAgentAsComponentAgent(self):
         self.prepare_heartbeat()
-        self.listen_behav = ComponentReceivePartBehaviour(self.jid, self.workflow, self.agentType)
+        self.listen_behav = ComponentReceivePartBehaviour(self.jid, self.workflow, self.produced_components)
         self.add_behaviour(self.listen_behav, self.common_template)
 
     def setAgentAsStarageAgent(self):
@@ -83,12 +83,9 @@ class FactoryAgent(Agent):
         print("hello, i'm {}. My neighbours: {}".format(self.jid, self.neighbours))
 
         agentTypeSwitch = {
-            AgentType.CAR: self.setAgentAsRootAgent,
-            AgentType.DOOR: self.setAgentAsComponentAgent,
-            AgentType.WHEEL: self.setAgentAsComponentAgent,
-            AgentType.ENGINE: self.setAgentAsComponentAgent,
-            AgentType.STORAGE: self.setAgentAsStarageAgent,
-            AgentType.UNKNOWN: Exception("Invalid agent type")
+            "root": self.setAgentAsRootAgent,
+            "component": self.setAgentAsComponentAgent,
+            "storage": self.setAgentAsStarageAgent
         }
 
         agentTypeSwitch.get(self.agentType, "Done")()

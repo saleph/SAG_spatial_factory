@@ -30,14 +30,11 @@ class StorageReceivePartBehaviour(CyclicBehaviour):
                     dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=agent_id,
                          thread=msg.thread, body=msg.body))
 
-
                 receivedThread = MessageThread(jsonStr=msg.thread)
                 receivedThread.ChangeMessageDirection()
                 message_thread_str = receivedThread.ToJson()
 
-
-                if receivedThread.message_thread_type == MessageThreadType.CarProduction:
-
+                if receivedThread.message_thread_type == MessageThreadType.RootComponentProduction:
                     # storage should only send back message to sender, not to all successors
                     for successor in self.agent.successors:
                         if AgentUsernameToIdMapper.agent_username_to_id[str(successor)] == sender_id:
@@ -64,9 +61,6 @@ class StorageReceivePartBehaviour(CyclicBehaviour):
                                     dict(msg_type="send", msg_id=msg.metadata["message_id"], sender=agent_id, receiver=receiver_id,
                                     thread=msg.thread, body= json.dumps(body_dict)))
                             break
-
-
-
             else:
                 print("{}: I did not received any message".format(agent_id))
         except Exception as e:

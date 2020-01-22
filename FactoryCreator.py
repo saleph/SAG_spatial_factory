@@ -1,4 +1,3 @@
-from DataTypes.AgentType import AgentType
 from Config.factory_workflow import Workflow
 from FactoryAgent import FactoryAgent
 from Utils.AgentUsernameToIdMapper import AgentUsernameToIdMapper
@@ -24,7 +23,9 @@ class FactoryCreator:
         self.agents = dict()
         self.full_neighbours_map = dict()
         self.agent_usernames = dict()
-        self.respawn_after_breakdown = False;
+        self.respawn_after_breakdown = False
+        storage_id = [id for id, attr in self.graph.nodes.items() if attr["type"] == "storage"][0]
+        self.storage_username = "agent_{}@{}".format(storage_id, hostname)
 
     def initialize_simulation(self) -> Dict[int, FactoryAgent]:
         """
@@ -76,22 +77,13 @@ class FactoryCreator:
     def create_agent(self, agent_id, respawn_after_breakdown=False):
         username = self.agent_usernames[agent_id]
 
-        if str("car") in self.graph.nodes[agent_id]["part"]:
-            agent_type = AgentType.CAR
-        elif str("wheel") in self.graph.nodes[agent_id]["part"]:
-            agent_type = AgentType.WHEEL
-        elif str("door") in self.graph.nodes[agent_id]["part"]:
-            agent_type = AgentType.DOOR
-        elif str("engine") in self.graph.nodes[agent_id]["part"]:
-            agent_type = AgentType.ENGINE
-        else:
-            agent_type = AgentType.STORAGE
+        node = self.graph.nodes[agent_id]
+        agent_type = node["type"]
+        produced_components = node["part"]
 
-        # TODO 69 from workflow
-        storage_username = "agent_" + str(69) + "@localhost"
-
-        agent = FactoryAgent(username, username, workflow=self.workflow, factory_creator=self, storage_username=storage_username,
-                             neighbours=self.full_neighbours_map[username], agent_type=agent_type)
+        agent = FactoryAgent(username, username, workflow=self.workflow, factory_creator=self, storage_username=self.storage_username,
+                             neighbours=self.full_neighbours_map[username], agent_type=agent_type, 
+                             produced_components=produced_components)
         self.agents[agent_id] = agent
         self.agents[agent_id].respawn_after_breakdown = respawn_after_breakdown;
         return agent

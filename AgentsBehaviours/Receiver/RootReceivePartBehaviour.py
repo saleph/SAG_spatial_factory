@@ -30,7 +30,7 @@ class RootReceivePartBehaviour(CyclicBehaviour):
                 if msg.thread is None and msg.body == "respawn_notification":
                     self.agent.resend_missing_messages(msg.sender)
 
-                elif received_thread.message_thread_type == MessageThreadType.CarProduction:
+                elif received_thread.message_thread_type == MessageThreadType.RootComponentProduction:
 
                     AgentActivityLogger._log(
                         dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=agent_id,
@@ -53,10 +53,6 @@ class RootReceivePartBehaviour(CyclicBehaviour):
                             AgentActivityLogger._log("Thread with id {0} removed from thread list of agent {1}"
                                                      .format(received_thread.id, '1'))
                             AgentActivityLogger._log("CAR CREATED")
-
-
-
-
             else:
                 print("{}: I did not received any message".format(agent_id))
         except Exception as e:

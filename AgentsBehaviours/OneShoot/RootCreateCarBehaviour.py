@@ -27,7 +27,7 @@ class RootCreateCarBehaviour(OneShotBehaviour):
             await asyncio.sleep(100)
 
         thread_id = str(uuid.uuid4())
-        message_thread = MessageThread(thread_id, message_thread_type=MessageThreadType.CarProduction,
+        message_thread = MessageThread(thread_id, message_thread_type=MessageThreadType.RootComponentProduction,
                                        message_direction=MessageDirection.Downward)
         message_thread_str = message_thread.ToJson()
 
