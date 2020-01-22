@@ -33,6 +33,20 @@
         },
         {
             "part": [
+                "piston"
+            ],
+            "id": 5,
+            "type": "component"
+        },
+        {
+            "part": [
+                "wheel_screw"
+            ],
+            "id": 6,
+            "type": "component"
+        },
+        {
+            "part": [
                 "steel",
                 "gum",
                 "paint",
@@ -57,6 +71,14 @@
             "target": 1
         },
         {
+            "source": 6,
+            "target": 2
+        },
+        {
+            "source": 5,
+            "target": 4
+        },
+        {
             "source": 9876,
             "target": 1
         },
@@ -71,6 +93,14 @@
         {
             "source": 9876,
             "target": 4
+        },
+        {
+            "source": 9876,
+            "target": 5
+        },
+        {
+            "source": 9876,
+            "target": 6
         }
     ]
 }

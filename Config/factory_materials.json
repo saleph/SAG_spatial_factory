@@ -10,8 +10,14 @@
     },
     "wheel": {
         "ingredients": {
+            "wheel_screw": 6,
             "aluminum": 10,
             "gum": 3
+        }
+    },
+    "wheel_screw": {
+        "ingredients": {
+            "steel": 1
         }
     },
     "door": {
@@ -22,7 +28,14 @@
     },
     "engine": {
         "ingredients": {
+            "piston": 4,
             "steel": 200
+        }
+    },
+    "piston": {
+        "ingredients": {
+            "steel": 2,
+            "aluminum": 1
         }
     },
     "steel": {
