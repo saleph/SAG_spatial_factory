@@ -3,7 +3,7 @@
 ## How to setup
 1. Install prosody:
 ```bash
-sudo apt-get install prosody
+sudo apt-get install prosody graphviz graphviz-dev
 ```
 2. Configure prosody:
 ```bash
@@ -19,7 +19,7 @@ sudo apt install python3
 ```
 5. Install modules:
 ```bash
-sudo pip3 install matplotlib networkx spade
+sudo pip3 install requirements.txt
 ```
 6. Run the project:
 ```bash

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pylab
 from operator import itemgetter
 from statistics import mean 
+from networkx.drawing.nx_agraph import write_dot, graphviz_layout
 
 def dump_binary(G, filename):
     directory = pathlib.Path(filename).parent
@@ -51,4 +52,14 @@ def draw_with_node_attrib(G, attrib_name):
     pos = nx.spring_layout(G)
     nx.draw_networkx_labels(G, pos=pos, labels={n:lab for n,lab in labels.items() if n in pos})
     nx.draw(G, pos=pos)
+    plt.show()
+
+def draw_dot(G, attrib_name):
+    labels = nx.get_node_attributes(G, attrib_name)
+    # for k, v in labels.items():
+    #     if len(v) > 1:
+    #         labels[k] = ["storage"]
+    pos = graphviz_layout(G, prog='dot')
+    nx.draw(G, pos, with_labels=False, arrows=True)
+    nx.draw_networkx_labels(G, pos=pos, labels={n:lab for n,lab in labels.items() if n in pos})
     plt.show()
