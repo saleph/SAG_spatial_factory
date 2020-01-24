@@ -33,12 +33,12 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
             else:
                 print("{}: I did not received any message".format(self.agent_id))
 
-            if self.agent.respawn_after_breakdown is True:
-                self.agent.send_respawn_notification()
-
         except Exception as e:
             print("exception in ", self.jid)
             traceback.print_exc(e)
+
+        if self.agent.respawn_after_breakdown:
+            self.agent.send_respawn_notification()
 
     async def process_msg(self, msg):
         sender_id = AgentUsernameToIdMapper.agent_username_to_id[str(msg.sender)]
@@ -46,7 +46,12 @@ class ComponentReceivePartBehaviour(CyclicBehaviour):
         received_thread = MessageThread(jsonStr=msg.thread)
 
         if msg.thread is None and msg.body == "respawn_notification":
-            self.agent.resend_missing_messages(msg.sender)
+            if self.agent.was_ever_revived:
+                # we are also respawned, so to avoid copies, we should skip this step
+                self.agent.was_ever_revived = False
+                self.agent.respawn_after_breakdown = False
+            else:
+                self.agent.resend_missing_messages(msg.sender)
         else:
             AgentActivityLogger._log(
                 dict(msg_type="receive", msg_id=msg.metadata["message_id"], sender=sender_id, receiver=self.agent_id,

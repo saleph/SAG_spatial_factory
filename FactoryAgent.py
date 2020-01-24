@@ -32,7 +32,8 @@ class FactoryAgent(Agent):
         self.add_behaviour(RetransmissionBehaviour(respawned_target))
 
 
-    def __init__(self, jid, password, *, graph, workflow, factory_creator, storage_username, verify_security=False, neighbours=None, agent_type=None, produced_components=None):
+    def __init__(self, jid, password, *, graph, workflow, factory_creator, storage_username, verify_security=False, 
+            neighbours=None, agent_type=None, produced_components=None, is_recovered=False):
         """
         Simulation agent initializer.
         :param jid: agent username in XMPP server, e.g. 'agent 0'
@@ -63,7 +64,8 @@ class FactoryAgent(Agent):
 
         self.message_thread_counter_list = []
         self.sent_messages_registry = []
-        self.respawn_after_breakdown = False
+        self.respawn_after_breakdown = is_recovered
+        self.was_ever_revived = is_recovered
 
     def setAgentAsRootAgent(self):
         self.prepare_heartbeat()
