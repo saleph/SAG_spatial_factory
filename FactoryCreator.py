@@ -21,6 +21,8 @@ class FactoryCreator:
         self.hostname = hostname
         self.root = None
         self.root_ID = None
+        self.storage = None
+        self.storage_ID = None
         self.agents = dict()
         self.full_neighbours_map = dict()
         self.agent_usernames = dict()
@@ -35,11 +37,17 @@ class FactoryCreator:
         """
         agents_ids = self.graph.nodes()
         root_id = int()
+        storage_id = int()
 
         for a_id in agents_ids:
             if str("car") in self.graph.nodes[a_id]["part"]:
                 root_id = a_id
                 self.root_ID = a_id
+
+            if len(self.graph.nodes[a_id]["part"]) > 1:
+                storage_id = a_id
+                self.storage_ID = a_id
+
 
         neighbours = dict([
             (agent_id, dict(
@@ -54,6 +62,7 @@ class FactoryCreator:
             agent.start()
 
         self.root = self.agents[root_id]
+        self.storage = self.agents[storage_id]
 
         return self.agents
 
