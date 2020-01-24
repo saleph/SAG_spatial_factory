@@ -20,6 +20,7 @@ class FactoryCreator:
         self.workflow = workflow
         self.hostname = hostname
         self.root = None
+        self.root_ID = None
         self.agents = dict()
         self.full_neighbours_map = dict()
         self.agent_usernames = dict()
@@ -38,6 +39,7 @@ class FactoryCreator:
         for a_id in agents_ids:
             if str("car") in self.graph.nodes[a_id]["part"]:
                 root_id = a_id
+                self.root_ID = a_id
 
         neighbours = dict([
             (agent_id, dict(

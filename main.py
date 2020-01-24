@@ -28,6 +28,8 @@ else:
         # wait for agents initialization
         time.sleep(5)
         factoryCreator.root.one_shot()
+        # remove root
+        agents_ids.remove(factoryCreator.root_ID)
         factoryCreator.agents[random.choice(agents_ids)].kill()
     elif scenario == 2:
         """"
@@ -37,6 +39,8 @@ else:
         # wait for agents initialization
         time.sleep(5)
         factoryCreator.root.one_shot()
+        # remove root
+        agents_ids.remove(factoryCreator.root_ID)
         for e in random.sample(agents_ids, int(len(agents_ids)/2)):
             factoryCreator.agents[e].kill()
     elif scenario == 3:
@@ -47,6 +51,8 @@ else:
         # wait for agents initialization
         time.sleep(5)
         factoryCreator.root.one_shot()
+        # remove root
+        agents_ids.remove(factoryCreator.root_ID)
         for e in agents_ids:
             factoryCreator.agents[e].kill()
     else:
