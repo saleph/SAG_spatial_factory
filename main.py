@@ -5,10 +5,10 @@ import time
 import sys
 import random
 
-graph_file = "Config/factory_graph.json"
+graph_file = "Config/factory_graph2.json"
 G = graph_utils.load_json(graph_file)
 # graph_utils.draw_with_node_attrib(G, 'part')
-workflow = Workflow("Config/factory_materials.json")
+workflow = Workflow("Config/factory_materials2.json")
 
 factoryCreator = FactoryCreator(G, workflow)
 

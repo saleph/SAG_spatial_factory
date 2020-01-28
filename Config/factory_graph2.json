@@ -1,0 +1,121 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "part": [
+                "car"
+            ],
+            "id": 1,
+            "type": "root"
+        },
+        {
+            "part": [
+                "wheel"
+            ],
+            "id": 2,
+            "type": "component"
+        },
+        {
+            "part": [
+                "door"
+            ],
+            "id": 3,
+            "type": "component"
+        },
+        {
+            "part": [
+                "engine"
+            ],
+            "id": 4,
+            "type": "component"
+        },
+        {
+            "part": [
+                "piston"
+            ],
+            "id": 5,
+            "type": "component"
+        },
+        {
+            "part": [
+                "wheel_screw"
+            ],
+            "id": 6,
+            "type": "component"
+        },
+        {
+            "part": [
+                "valve"
+            ],
+            "id": 7,
+            "type": "component"
+        },
+        {
+            "part": [
+                "steel",
+                "gum",
+                "paint",
+                "aluminum",
+                "glass"
+            ],
+            "id": 9876,
+            "type": "storage"
+        }
+    ],
+    "links": [
+        {
+            "source": 2,
+            "target": 1
+        },
+        {
+            "source": 3,
+            "target": 1
+        },
+        {
+            "source": 4,
+            "target": 1
+        },
+        {
+            "source": 6,
+            "target": 2
+        },
+        {
+            "source": 7,
+            "target": 4
+        },
+        {
+            "source": 5,
+            "target": 4
+        },
+        {
+            "source": 9876,
+            "target": 1
+        },
+        {
+            "source": 9876,
+            "target": 7
+        },
+        {
+            "source": 9876,
+            "target": 2
+        },
+        {
+            "source": 9876,
+            "target": 3
+        },
+        {
+            "source": 9876,
+            "target": 4
+        },
+        {
+            "source": 9876,
+            "target": 5
+        },
+        {
+            "source": 9876,
+            "target": 6
+        }
+    ]
+}

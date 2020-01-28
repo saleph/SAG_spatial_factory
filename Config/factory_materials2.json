@@ -1,0 +1,62 @@
+{
+    "car": {
+        "ingredients": {
+            "wheel": 4,
+            "door": 4,
+            "engine": 1,
+            "steel": 200,
+            "paint": 120
+        }
+    },
+    "wheel": {
+        "ingredients": {
+            "wheel_screw": 6,
+            "aluminum": 10,
+            "gum": 3
+        }
+    },
+    "wheel_screw": {
+        "ingredients": {
+            "steel": 1
+        }
+    },
+    "valve": {
+        "ingredients": {
+            "aluminum": 1
+        }
+    },
+    "door": {
+        "ingredients": {
+            "steel": 14,
+            "glass": 2
+        }
+    },
+    "engine": {
+        "ingredients": {
+            "piston": 4,
+            "valve": 2,
+            "steel": 200
+        }
+    },
+    "piston": {
+        "ingredients": {
+            "steel": 2,
+            "aluminum": 1
+        }
+    },
+    "steel": {
+        "ingredients": {}
+    },
+    "paint": {
+        "ingredients": {}
+    },
+    "aluminum": {
+        "ingredients": {}
+    },
+    "gum": {
+        "ingredients": {}
+    },
+    "glass": {
+        "ingredients": {}
+    }
+}
