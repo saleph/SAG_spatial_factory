@@ -60,6 +60,12 @@ def draw_dot(G, attrib_name):
     #     if len(v) > 1:
     #         labels[k] = ["storage"]
     pos = graphviz_layout(G, prog='dot')
-    nx.draw(G, pos, with_labels=False, arrows=True)
+    val_map = {'root': 0,
+           'component': 0.7,
+           'storage': 1}
+    print(type(nx.get_node_attributes(G, 'type')))
+    print([(node, type_value) for node, type_value in nx.get_node_attributes(G, 'type').items()])
+    values = [val_map.get(type_value) for node, type_value in nx.get_node_attributes(G, 'type').items()]
+    nx.draw(G, pos, with_labels=False, arrows=True, cmap=plt.get_cmap('cool'), node_color=values)
     nx.draw_networkx_labels(G, pos=pos, labels={n:lab for n,lab in labels.items() if n in pos})
     plt.show()

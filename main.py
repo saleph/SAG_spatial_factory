@@ -18,6 +18,8 @@ for n in G.nodes:
 
 if len(sys.argv) <= 1:
     print("Scenario was not selected")
+elif sys.argv[1] == "show":
+    graph_utils.draw_dot(G, "part")
 else:
     scenario = int(sys.argv[1])
     if scenario == 0:
